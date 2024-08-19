@@ -18,4 +18,4 @@ push:
 clean:
 	docker container rm $(CONTAINER) -f
 	docker image rm $(IMAGE) -f
-	rm dellstore2-normal-1.0/*.sql.gz
+	rm -f dellstore2-normal-1.0/*.sql.gz
