@@ -91,70 +91,73 @@ rem =======================================================
 rem Accept and verify schema password
 rem =======================================================
 
-ACCEPT pass PROMPT 'Enter a password for the user CO: ' HIDE
+rem ACCEPT pass PROMPT 'Enter a password for the user CO: ' HIDE
 
-BEGIN
-   IF '&pass' IS NULL THEN
-      RAISE_APPLICATION_ERROR(-20999, 'Error: the CO password is mandatory! Please specify a password!');
-   END IF;
-END;
-/
+rem BEGIN
+rem    IF '&pass' IS NULL THEN
+rem       RAISE_APPLICATION_ERROR(-20999, 'Error: the CO password is mandatory! Please specify a password!');
+rem    END IF;
+rem END;
+rem /
 
 rem =======================================================
 rem Accept and verify tablespace name
 rem =======================================================
 
-COLUMN property_value NEW_VALUE var_default_tablespace NOPRINT
-SELECT property_value FROM database_properties WHERE property_name = 'DEFAULT_PERMANENT_TABLESPACE';
+rem COLUMN property_value NEW_VALUE var_default_tablespace NOPRINT
+rem SELECT property_value FROM database_properties WHERE property_name = 'DEFAULT_PERMANENT_TABLESPACE';
 
-ACCEPT tbs PROMPT 'Enter a tablespace for CO [&var_default_tablespace]: ' DEFAULT '&var_default_tablespace'
+rem ACCEPT tbs PROMPT 'Enter a tablespace for CO [&var_default_tablespace]: ' DEFAULT '&var_default_tablespace'
 
-DECLARE
-   v_tbs_exists   NUMBER := 0;
-BEGIN
-   SELECT COUNT(1) INTO v_tbs_exists
-     FROM DBA_TABLESPACES
-       WHERE TABLESPACE_NAME = UPPER('&tbs');
-   IF v_tbs_exists = 0 THEN
-      RAISE_APPLICATION_ERROR(-20998, 'Error: the tablespace ''' || UPPER('&tbs') || ''' does not exist!');
-   END IF;
-END;
-/
+rem DECLARE
+rem    v_tbs_exists   NUMBER := 0;
+rem BEGIN
+rem    SELECT COUNT(1) INTO v_tbs_exists
+rem      FROM DBA_TABLESPACES
+rem        WHERE TABLESPACE_NAME = UPPER('&tbs');
+rem    IF v_tbs_exists = 0 THEN
+rem       RAISE_APPLICATION_ERROR(-20998, 'Error: the tablespace ''' || UPPER('&tbs') || ''' does not exist!');
+rem    END IF;
+rem END;
+rem /
 
 rem =======================================================
 rem cleanup old CO schema, if found and requested
 rem =======================================================
 
-ACCEPT overwrite_schema PROMPT 'Do you want to overwrite the schema, if it already exists? [YES|no]: ' DEFAULT 'YES'
+rem ACCEPT overwrite_schema PROMPT 'Do you want to overwrite the schema, if it already exists? [YES|no]: ' DEFAULT 'YES'
 
-SET SERVEROUTPUT ON;
-DECLARE
-   v_user_exists   all_users.username%TYPE;
-BEGIN
-   SELECT MAX(username) INTO v_user_exists
-      FROM all_users WHERE username = 'CO';
-   -- Schema already exists
-   IF v_user_exists IS NOT NULL THEN
-      -- Overwrite schema if the user chose to do so
-      IF UPPER('&overwrite_schema') = 'YES' THEN
-         EXECUTE IMMEDIATE 'DROP USER CO CASCADE';
-         DBMS_OUTPUT.PUT_LINE('Old CO schema has been dropped.');
-      -- or raise error if the user doesn't want to overwrite it
-      ELSE
-         RAISE_APPLICATION_ERROR(-20997, 'Abort: the schema already exists and the user chose not to overwrite it.');
-      END IF;
-   END IF;
-END;
-/
-SET SERVEROUTPUT OFF;
+rem SET SERVEROUTPUT ON;
+rem DECLARE
+rem    v_user_exists   all_users.username%TYPE;
+rem BEGIN
+rem    SELECT MAX(username) INTO v_user_exists
+rem       FROM all_users WHERE username = 'CO';
+rem    -- Schema already exists
+rem    IF v_user_exists IS NOT NULL THEN
+rem       -- Overwrite schema if the user chose to do so
+rem       IF UPPER('&overwrite_schema') = 'YES' THEN
+rem          EXECUTE IMMEDIATE 'DROP USER CO CASCADE';
+rem          DBMS_OUTPUT.PUT_LINE('Old CO schema has been dropped.');
+rem       -- or raise error if the user doesn't want to overwrite it
+rem       ELSE
+rem          RAISE_APPLICATION_ERROR(-20997, 'Abort: the schema already exists and the user chose not to overwrite it.');
+rem       END IF;
+rem    END IF;
+rem END;
+rem /
+rem SET SERVEROUTPUT OFF;
 
 rem =======================================================
 rem create the CO schema user
 rem =======================================================
 
-CREATE USER co IDENTIFIED BY "&pass"
-               DEFAULT TABLESPACE &tbs
-               QUOTA UNLIMITED ON &tbs;
+ALTER SESSION SET CONTAINER=FREEPDB1;
+CREATE TABLESPACE USERS DATAFILE '/opt/oracle/oradata/FREE/FREEPDB1/users01.dbf' SIZE 10M AUTOEXTEND ON;
+
+CREATE USER co IDENTIFIED BY "password"
+               DEFAULT TABLESPACE USERS
+               QUOTA UNLIMITED ON USERS;
 
 GRANT CREATE MATERIALIZED VIEW,
       CREATE PROCEDURE,
@@ -175,13 +178,13 @@ rem =======================================================
 rem create CO schema objects
 rem =======================================================
 
-@@co_create.sql
+@@/opt/oracle/scripts/startup/co/co_create.sql
 
 rem =======================================================
 rem populate tables with data
 rem =======================================================
 
-@@co_populate.sql
+@@/opt/oracle/scripts/startup/co/co_populate.sql
 
 rem =======================================================
 rem installation validation
