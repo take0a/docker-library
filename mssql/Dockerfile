@@ -5,10 +5,10 @@ RUN mkdir -p /usr/config
 WORKDIR /usr/config
 
 # Bundle config source
-COPY . /usr/config
+COPY ./entrypoint.sh ./configure-db.sh ./northwind-pubs/instnwnd.sql ./northwind-pubs/instpubs.sql /usr/config/
 
 # Grant permissions for to our scripts to be executable
-RUN chmod +x /usr/config/entrypoint.sh
-RUN chmod +x /usr/config/configure-db.sh
+RUN chmod +x /usr/config/entrypoint.sh \
+&& chmod +x /usr/config/configure-db.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
