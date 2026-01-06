@@ -42,146 +42,146 @@ USE sakila;
 --
 
 CREATE TABLE actor (
-  actor_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各俳優を一意に識別するために使用される代理主キー。',
-  first_name VARCHAR(45) NOT NULL COMMENT '俳優の名。',
-  last_name VARCHAR(45) NOT NULL COMMENT '俳優の姓。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  actor_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(45) NOT NULL,
+  last_name VARCHAR(45) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (actor_id),
   KEY idx_actor_last_name (last_name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='actor テーブルには、すべての俳優の情報がリストされます。\nactor テーブルは、film_actor テーブルによって film テーブルに結合されています。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `address`
 --
 
 CREATE TABLE address (
-  address_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各住所を一意に識別するために使用される代理主キー。',
-  address VARCHAR(50) NOT NULL COMMENT '住所の 1 行目。',
-  address2 VARCHAR(50) DEFAULT NULL COMMENT '住所の 2 行目（オプション）。',
-  district VARCHAR(20) NOT NULL COMMENT '住所の地域。州、県、都道府県など。',
-  city_id SMALLINT UNSIGNED NOT NULL COMMENT 'city テーブルを指す外部キー。',
-  postal_code VARCHAR(10) DEFAULT NULL COMMENT '住所の郵便番号（該当する場合）。',
-  phone VARCHAR(20) NOT NULL COMMENT '住所の電話番号。',
+  address_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  address VARCHAR(50) NOT NULL,
+  address2 VARCHAR(50) DEFAULT NULL,
+  district VARCHAR(20) NOT NULL,
+  city_id SMALLINT UNSIGNED NOT NULL,
+  postal_code VARCHAR(10) DEFAULT NULL,
+  phone VARCHAR(20) NOT NULL,
   -- Add GEOMETRY column for MySQL 5.7.5 and higher
   -- Also include SRID attribute for MySQL 8.0.3 and higher
   /*!50705 location GEOMETRY */ /*!80003 SRID 0 */ /*!50705 NOT NULL,*/
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成または最後に更新された日時。',
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (address_id),
   KEY idx_fk_city_id (city_id),
   /*!50705 SPATIAL KEY `idx_location` (location),*/
   CONSTRAINT `fk_address_city` FOREIGN KEY (city_id) REFERENCES city (city_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='address テーブルには、顧客、スタッフ、店舗の住所情報が格納されます。\naddress テーブルの主キーは、顧客、スタッフ、店舗の各テーブルでは外部キーとして表示されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `category`
 --
 
 CREATE TABLE category (
-  category_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各カテゴリを一意に識別するために使用される代理主キー。',
-  name VARCHAR(25) NOT NULL COMMENT 'カテゴリ名。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時、または最後に更新された日時。',
+  category_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(25) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (category_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4  COMMENT='category テーブルは、映画に割り当てられるカテゴリをリストします。\ncategory テーブルは、film_category テーブルを介して film テーブルに結合されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `city`
 --
 
 CREATE TABLE city (
-  city_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各都市を一意に識別するために使用される代理主キー。',
-  city VARCHAR(50) NOT NULL COMMENT '都市名。',
-  country_id SMALLINT UNSIGNED NOT NULL COMMENT '都市が属する国を識別する外部キー。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成または最後に更新された日時。',
+  city_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  city VARCHAR(50) NOT NULL,
+  country_id SMALLINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (city_id),
   KEY idx_fk_country_id (country_id),
   CONSTRAINT `fk_city_country` FOREIGN KEY (country_id) REFERENCES country (country_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='city テーブルには都市のリストが格納されています。\ncity テーブルは address テーブル内の外部キーによって参照され、country テーブルも外部キーによって参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `country`
 --
 
 CREATE TABLE country (
-  country_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各国を一意に識別するために使用される代理主キー。',
-  country VARCHAR(50) NOT NULL COMMENT '国名。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時、または最後に更新された日時。',
+  country_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  country VARCHAR(50) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (country_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='country テーブルには国のリストが格納されます。\ncountry テーブルは、city テーブルの外部キーによって参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `customer`
 --
 
 CREATE TABLE customer (
-  customer_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各顧客を一意に識別するために使用される代理主キー。',
-  store_id TINYINT UNSIGNED NOT NULL COMMENT ' 顧客の「ホームストア」を識別する外部キー。顧客はこのストアからのみレンタルできるわけではなく、通常このストアで買い物をします。',
-  first_name VARCHAR(45) NOT NULL COMMENT '顧客の名。',
-  last_name VARCHAR(45) NOT NULL COMMENT '顧客の姓。',
-  email VARCHAR(50) DEFAULT NULL COMMENT '顧客のメールアドレス。',
-  address_id SMALLINT UNSIGNED NOT NULL COMMENT 'address テーブル内の顧客の住所を識別する外部キー。',
-  active BOOLEAN NOT NULL DEFAULT TRUE COMMENT '顧客がアクティブな顧客かどうかを示します。これを FALSE に設定することで、顧客を完全に削除する代わりに使用できます。ほとんどのクエリには WHERE active = TRUE 句が必要です。',
-  create_date DATETIME NOT NULL COMMENT '顧客がシステムに追加された日付。この日付は、INSERT 中にトリガーを使用して自動的に設定されます。',
-  last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時、または最後に更新された日時。',
+  customer_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  store_id TINYINT UNSIGNED NOT NULL,
+  first_name VARCHAR(45) NOT NULL,
+  last_name VARCHAR(45) NOT NULL,
+  email VARCHAR(50) DEFAULT NULL,
+  address_id SMALLINT UNSIGNED NOT NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  create_date DATETIME NOT NULL,
+  last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (customer_id),
   KEY idx_fk_store_id (store_id),
   KEY idx_fk_address_id (address_id),
   KEY idx_last_name (last_name),
   CONSTRAINT fk_customer_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_customer_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='customer テーブルには、すべての顧客のリストが格納されます。\ncustomer テーブルは、payment テーブルと rental テーブルから参照され、外部キーを使用して address テーブルと store テーブルを参照します。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `film`
 --
 
 CREATE TABLE film (
-  film_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'テーブル内の各映画を一意に識別するために使用される代理主キー。',
-  title VARCHAR(128) NOT NULL COMMENT '映画のタイトル。',
-  description TEXT DEFAULT NULL COMMENT '映画の短い説明またはあらすじ。',
-  release_year YEAR DEFAULT NULL COMMENT '映画の公開年。',
-  language_id TINYINT UNSIGNED NOT NULL COMMENT 'language テーブルを指す外部キー。映画の言語を識別します。',
-  original_language_id TINYINT UNSIGNED DEFAULT NULL COMMENT 'language テーブルを指す外部キー。映画の元の言語を識別します。映画が新しい言語に吹き替えられた場合に使用されます。',
-  rental_duration TINYINT UNSIGNED NOT NULL DEFAULT 3 COMMENT 'レンタル期間（日数）。',
-  rental_rate DECIMAL(4,2) NOT NULL DEFAULT 4.99 COMMENT 'rental_duration 列で指定された期間の映画のレンタル料金。',
-  length SMALLINT UNSIGNED DEFAULT NULL COMMENT '映画の上映時間（分）。',
-  replacement_cost DECIMAL(5,2) NOT NULL DEFAULT 19.99 COMMENT '映画が返却されなかった、または破損した状態で返却された場合に顧客に請求される金額。',
-  rating ENUM('G','PG','PG-13','R','NC-17') DEFAULT 'G' COMMENT '映画に割り当てられたレーティング。G、PG、PG-13、R、NC-17 のいずれかになります。',
-  special_features SET('Trailers','Commentaries','Deleted Scenes','Behind the Scenes') DEFAULT NULL COMMENT 'DVD に収録されている一般的な特典映像の一覧。予告編、コメンタリー、削除シーン、舞台裏映像など、0 個以上の項目になります。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  film_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  title VARCHAR(128) NOT NULL,
+  description TEXT DEFAULT NULL,
+  release_year YEAR DEFAULT NULL,
+  language_id TINYINT UNSIGNED NOT NULL,
+  original_language_id TINYINT UNSIGNED DEFAULT NULL,
+  rental_duration TINYINT UNSIGNED NOT NULL DEFAULT 3,
+  rental_rate DECIMAL(4,2) NOT NULL DEFAULT 4.99,
+  length SMALLINT UNSIGNED DEFAULT NULL,
+  replacement_cost DECIMAL(5,2) NOT NULL DEFAULT 19.99,
+  rating ENUM('G','PG','PG-13','R','NC-17') DEFAULT 'G',
+  special_features SET('Trailers','Commentaries','Deleted Scenes','Behind the Scenes') DEFAULT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (film_id),
   KEY idx_title (title),
   KEY idx_fk_language_id (language_id),
   KEY idx_fk_original_language_id (original_language_id),
   CONSTRAINT fk_film_language FOREIGN KEY (language_id) REFERENCES language (language_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_film_language_original FOREIGN KEY (original_language_id) REFERENCES language (language_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='film テーブルは、店舗に在庫がある可能性のあるすべての映画のリストです。各映画の実際の在庫数は inventory テーブルに保持されます。\nfilm テーブルは language テーブルを参照し、film_category、film_actor、inventory テーブルから参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `film_actor`
 --
 
 CREATE TABLE film_actor (
-  actor_id SMALLINT UNSIGNED NOT NULL COMMENT '俳優を識別する外部キー。',
-  film_id SMALLINT UNSIGNED NOT NULL COMMENT '映画を識別する外部キー。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  actor_id SMALLINT UNSIGNED NOT NULL,
+  film_id SMALLINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (actor_id,film_id),
   KEY idx_fk_film_id (`film_id`),
   CONSTRAINT fk_film_actor_actor FOREIGN KEY (actor_id) REFERENCES actor (actor_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_film_actor_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='film_actor テーブルは、映画と俳優間の多対多の関係をサポートするために使用されます。特定の映画に出演する俳優ごとに、film_actor テーブルに俳優と映画をリストする行が1つずつ存在します。\nfilm_actor テーブルは、外部キーを使用して映画テーブルと俳優テーブルを参照します。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `film_category`
 --
 
 CREATE TABLE film_category (
-  film_id SMALLINT UNSIGNED NOT NULL COMMENT '映画を識別する外部キー。',
-  category_id TINYINT UNSIGNED NOT NULL COMMENT 'カテゴリを識別する外部キー。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  film_id SMALLINT UNSIGNED NOT NULL,
+  category_id TINYINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (film_id, category_id),
   CONSTRAINT fk_film_category_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_film_category_category FOREIGN KEY (category_id) REFERENCES category (category_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='film_category テーブルは、映画とカテゴリ間の多対多関係をサポートするために使用されます。映画に適用されるカテゴリごとに、film_category テーブルにカテゴリと映画をリストする行が1つずつ作成されます。\nfilm_category テーブルは、外部キーを使用して映画テーブルとカテゴリテーブルを参照します。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `film_text`
@@ -197,12 +197,12 @@ SET @@default_storage_engine = 'MyISAM';
 /*!50610 SET @@default_storage_engine = 'InnoDB'*/;
 
 CREATE TABLE film_text (
-  film_id SMALLINT UNSIGNED NOT NULL COMMENT 'テーブル内の各映画を一意に識別するために使用される代理主キー。',
-  title VARCHAR(255) NOT NULL COMMENT '映画のタイトル。',
-  description TEXT COMMENT '映画の短い説明またはあらすじ。',
+  film_id SMALLINT UNSIGNED NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
   PRIMARY KEY  (film_id),
   FULLTEXT KEY idx_title_description (title,description)
-) DEFAULT CHARSET=utf8mb4 COMMENT='film_text テーブルには、film テーブルの film_id、title、description の各カラムが含まれます。このテーブルの内容は、film テーブルの INSERT、UPDATE、および DELETE 操作に対するトリガーによって、film テーブルと同期されています (セクション 5.5「トリガー」を参照)。\nfilm_textテーブルの内容を直接変更しないでください。すべての変更はfilmテーブルに対して行う必要があります。';
+) DEFAULT CHARSET=utf8mb4;
 
 SET @@default_storage_engine = @old_default_storage_engine;
 
@@ -240,47 +240,47 @@ DELIMITER ;
 --
 
 CREATE TABLE inventory (
-  inventory_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '在庫内の各商品を一意に識別するために使用される代理主キー。',
-  film_id SMALLINT UNSIGNED NOT NULL COMMENT 'この商品が表す映画を指す外部キー。',
-  store_id TINYINT UNSIGNED NOT NULL COMMENT 'この商品を在庫している店舗を指す外部キー。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成または最後に更新された日時。',
+  inventory_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  film_id SMALLINT UNSIGNED NOT NULL,
+  store_id TINYINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (inventory_id),
   KEY idx_fk_film_id (film_id),
   KEY idx_store_id_film_id (store_id,film_id),
   CONSTRAINT fk_inventory_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_inventory_film FOREIGN KEY (film_id) REFERENCES film (film_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='inventory テーブルには、特定の店舗にある特定の映画のコピーごとに1行ずつ格納されます。\ninventory テーブルは、外部キーを使用して film テーブルと store テーブルを参照し、rental テーブルからも参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `language`
 --
 
 CREATE TABLE language (
-  language_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '各言語を一意に識別するために使用される代理主キー。',
-  name CHAR(20) NOT NULL COMMENT '言語の英語名。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時、または最後に更新された日時。',
+  language_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name CHAR(20) NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (language_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='language テーブルは、映画の language 値と original language 値に指定可能な言語をリストアップした参照テーブルです。\nlanguage テーブルは film テーブルから参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `payment`
 --
 
 CREATE TABLE payment (
-  payment_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '各支払いを一意に識別するために使用される代理主キー。',
-  customer_id SMALLINT UNSIGNED NOT NULL COMMENT '支払いが適用される残高を持つ顧客。これは、customer テーブルへの外部キー参照です。',
-  staff_id TINYINT UNSIGNED NOT NULL COMMENT '支払いを処理したスタッフ。これは、staff テーブルへの外部キー参照です。',
-  rental_id INT DEFAULT NULL COMMENT '支払いが適用されるレンタル。一部の支払いは未払い料金であり、レンタルに直接関連していない可能性があるため、これはオプションです。',
-  amount DECIMAL(5,2) NOT NULL COMMENT '支払い金額。',
-  payment_date DATETIME NOT NULL COMMENT '支払いが処理された日付。',
-  last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  payment_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  customer_id SMALLINT UNSIGNED NOT NULL,
+  staff_id TINYINT UNSIGNED NOT NULL,
+  rental_id INT DEFAULT NULL,
+  amount DECIMAL(5,2) NOT NULL,
+  payment_date DATETIME NOT NULL,
+  last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (payment_id),
   KEY idx_fk_staff_id (staff_id),
   KEY idx_fk_customer_id (customer_id),
   CONSTRAINT fk_payment_rental FOREIGN KEY (rental_id) REFERENCES rental (rental_id) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT fk_payment_customer FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_payment_staff FOREIGN KEY (staff_id) REFERENCES staff (staff_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='payment テーブルには、顧客による各支払いが記録され、金額や支払われるレンタル料金（該当する場合）などの情報が含まれます。\npayment テーブルは、customer テーブル、rental テーブル、および staff テーブルを参照します。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 --
@@ -288,13 +288,13 @@ CREATE TABLE payment (
 --
 
 CREATE TABLE rental (
-  rental_id INT NOT NULL AUTO_INCREMENT COMMENT 'レンタルを一意に識別する代理主キー。',
-  rental_date DATETIME NOT NULL COMMENT '品目がレンタルされた日時。',
-  inventory_id MEDIUMINT UNSIGNED NOT NULL COMMENT 'レンタル対象の品目。',
-  customer_id SMALLINT UNSIGNED NOT NULL COMMENT '品目をレンタルした顧客。',
-  return_date DATETIME DEFAULT NULL COMMENT '品目が返却された日時。',
-  staff_id TINYINT UNSIGNED NOT NULL COMMENT 'レンタルを処理したスタッフ。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成または最後に更新された日時。',
+  rental_id INT NOT NULL AUTO_INCREMENT,
+  rental_date DATETIME NOT NULL,
+  inventory_id MEDIUMINT UNSIGNED NOT NULL,
+  customer_id SMALLINT UNSIGNED NOT NULL,
+  return_date DATETIME DEFAULT NULL,
+  staff_id TINYINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (rental_id),
   UNIQUE KEY  (rental_date,inventory_id,customer_id),
   KEY idx_fk_inventory_id (inventory_id),
@@ -303,46 +303,46 @@ CREATE TABLE rental (
   CONSTRAINT fk_rental_staff FOREIGN KEY (staff_id) REFERENCES staff (staff_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_rental_inventory FOREIGN KEY (inventory_id) REFERENCES inventory (inventory_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='rental テーブルには、各在庫品目のレンタルごとに1行ずつ、誰がどの品目をレンタルしたか、いつレンタルされたか、いつ返却されたかに関する情報が含まれます。\nrental テーブルは、inventory テーブル、customer テーブル、staff テーブルを参照し、payment テーブルからも参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `staff`
 --
 
 CREATE TABLE staff (
-  staff_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'スタッフを一意に識別する代理主キー。',
-  first_name VARCHAR(45) NOT NULL COMMENT 'スタッフの名。',
-  last_name VARCHAR(45) NOT NULL COMMENT 'スタッフの姓。',
-  address_id SMALLINT UNSIGNED NOT NULL COMMENT 'address テーブル内のスタッフの住所への外部キー。',
-  picture BLOB DEFAULT NULL COMMENT '従業員の写真を含む BLOB。',
-  email VARCHAR(50) DEFAULT NULL COMMENT 'スタッフのメールアドレス。',
-  store_id TINYINT UNSIGNED NOT NULL COMMENT 'スタッフの「所属店舗」。従業員は他の店舗で働くこともできますが、通常は上記の店舗に配属されます。',
-  active BOOLEAN NOT NULL DEFAULT TRUE COMMENT '従業員が現在在籍しているかどうか。従業員が退職した場合、その従業員の行はこのテーブルから削除されず、この列は FALSE に設定されます。',
-  username VARCHAR(16) NOT NULL COMMENT 'スタッフがレンタルシステムにアクセスするために使用するユーザー名。',
-  password VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'スタッフがレンタルシステムにアクセスするために使用するパスワード。パスワードはSHA2()関数を使用してハッシュとして保存する必要があります。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成または最後に更新された日時。',
+  staff_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(45) NOT NULL,
+  last_name VARCHAR(45) NOT NULL,
+  address_id SMALLINT UNSIGNED NOT NULL,
+  picture BLOB DEFAULT NULL,
+  email VARCHAR(50) DEFAULT NULL,
+  store_id TINYINT UNSIGNED NOT NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  username VARCHAR(16) NOT NULL,
+  password VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (staff_id),
   KEY idx_fk_store_id (store_id),
   KEY idx_fk_address_id (address_id),
   CONSTRAINT fk_staff_store FOREIGN KEY (store_id) REFERENCES store (store_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_staff_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='staff テーブルには、メールアドレス、ログイン情報、写真などの情報を含む全スタッフがリストされます。\nstaff テーブルは、外部キーを使用して store テーブルと address テーブルを参照し、rental テーブル、payment テーブル、store テーブルからも参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `store`
 --
 
 CREATE TABLE store (
-  store_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '店舗を一意に識別する代理主キー。',
-  manager_staff_id TINYINT UNSIGNED NOT NULL COMMENT 'この店舗のマネージャーを識別する外部キー。',
-  address_id SMALLINT UNSIGNED NOT NULL COMMENT 'この店舗の住所を識別する外部キー。',
-  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '行が作成された日時または最後に更新された日時。',
+  store_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  manager_staff_id TINYINT UNSIGNED NOT NULL,
+  address_id SMALLINT UNSIGNED NOT NULL,
+  last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY  (store_id),
   UNIQUE KEY idx_unique_manager (manager_staff_id),
   KEY idx_fk_address_id (address_id),
   CONSTRAINT fk_store_staff FOREIGN KEY (manager_staff_id) REFERENCES staff (staff_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_store_address FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='store テーブルには、システム内のすべての店舗がリストされます。すべての在庫は特定の店舗に割り当てられ、スタッフと顧客には「ホームストア」が割り当てられます。\nstore テーブルは、外部キーを使用して staff テーブルと address テーブルを参照し、staff テーブル、customer テーブル、inventory テーブルからも参照されます。';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- View structure for view `customer_list`
